@@ -60,7 +60,7 @@ translated = translator.translate(transcript, dest='${{ github.event.inputs.lang
 with open('transcript_translated.txt', 'w') as f:
     f.write(translated.text)
 "
-      
+
       - name: Upload transcript
         uses: actions/upload-artifact@v3
         with:
