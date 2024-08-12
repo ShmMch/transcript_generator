@@ -1,6 +1,6 @@
 import sys
 import os
-import youtube_dl
+import yt_dlp as youtube_dl
 from whisper import Whisper
 from googletrans import Translator
 
@@ -9,6 +9,7 @@ def download_audio(url, output_file='audio.mp3'):
         'format': 'bestaudio/best',
         'outtmpl': output_file,
         'quiet': True,
+        'noplaylist': True,  # Download only the single video
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
