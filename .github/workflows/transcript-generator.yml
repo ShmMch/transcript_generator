@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install youtube_dl openai-whisper googletrans==4.0.0-rc1
+        pip install yt-dlp openai-whisper googletrans==4.0.0-rc1
 
     - name: Download and transcribe audio
       run: |
