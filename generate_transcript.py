@@ -1,31 +1,36 @@
 import sys
-from youtube_transcript_api import YouTubeTranscriptApi
+import os
+import youtube_dl
+from whisper import Whisper
 from googletrans import Translator
 
-def fetch_transcript(video_id):
-    transcript = YouTubeTranscriptApi.get_transcript(video_id)
-    return transcript
+def download_audio(url, output_file='audio.mp3'):
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'outtmpl': output_file,
+        'quiet': True,
+    }
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+
+def transcribe_audio(audio_file):
+    model = Whisper.load_model('base')
+    result = model.transcribe(audio_file)
+    return result['text']
 
 def translate_transcript(transcript, dest_language):
     translator = Translator()
-    translated = []
-    for entry in transcript:
-        translated_text = translator.translate(entry['text'], dest=dest_language).text
-        translated.append({
-            'start': entry['start'],
-            'duration': entry['duration'],
-            'text': translated_text
-        })
+    translated = translator.translate(transcript, dest=dest_language).text
     return translated
 
 def save_transcript(transcript, filename='transcript.txt'):
     with open(filename, 'w') as file:
-        for entry in transcript:
-            file.write(f"{entry['start']} - {entry['duration']} : {entry['text']}\n")
+        file.write(transcript)
 
 def main(url, language):
-    video_id = url.split('v=')[-1].split('&')[0]  # Extract video ID from URL
-    transcript = fetch_transcript(video_id)
+    audio_file = 'audio.mp3'
+    download_audio(url, audio_file)
+    transcript = transcribe_audio(audio_file)
     translated_transcript = translate_transcript(transcript, language)
     save_transcript(translated_transcript)
 
