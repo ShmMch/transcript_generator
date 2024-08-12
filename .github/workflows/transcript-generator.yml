@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install git+https://github.com/pytube/pytube.git@yogesh_girmal:master
+          pip install git+https://github.com/pytube/pytube.git@96315dff218c3c5c4621997a5587f9d677774b97
           pip install whisper googletrans==4.0.0-rc1
 
       - name: Download video
