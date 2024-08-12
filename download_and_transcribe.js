@@ -1,4 +1,4 @@
-const ytdl = require('@distube/ytdl-core');
+const ytdl = require('ytdl-core');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
 const { exec } = require('child_process');
