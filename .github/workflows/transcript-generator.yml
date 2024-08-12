@@ -4,38 +4,65 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: 'URL of the YouTube video'
+        description: 'URL of the video'
         required: true
         type: string
       language:
-        description: 'Language code for translation (e.g., en, es, fr)'
-        required: true
+        description: 'Language for translation (optional)'
+        required: false
         type: string
+        default: 'en'
 
 jobs:
-  generate-transcript:
+  transcribe:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.9'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install yt-dlp openai-whisper googletrans==4.0.0-rc1
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install youtube-dl whisper googletrans==4.0.0-rc1
 
-    - name: Download and transcribe audio
-      run: |
-        python generate_transcript.py "${{ github.event.inputs.url }}" "${{ github.event.inputs.language }}"
+      - name: Download video
+        run: |
+          youtube-dl -o video.mp4 ${{ github.event.inputs.url }}
 
-    - name: Upload transcript
-      uses: actions/upload-artifact@v3
-      with:
-        name: transcript
-        path: transcript.txt
+      - name: Transcribe audio
+        run: |
+          python -c "
+import whisper
+
+model = whisper.load_model('base')
+result = model.transcribe('video.mp4')
+with open('transcript.txt', 'w') as f:
+    f.write(result['text'])
+"
+
+      - name: Translate transcript
+        if: ${{ github.event.inputs.language != 'en' }}
+        run: |
+          python -c "
+from googletrans import Translator
+
+translator = Translator()
+with open('transcript.txt', 'r') as f:
+    transcript = f.read()
+
+translated = translator.translate(transcript, dest='${{ github.event.inputs.language }}')
+with open('transcript_translated.txt', 'w') as f:
+    f.write(translated.text)
+"
+      
+      - name: Upload transcript
+        uses: actions/upload-artifact@v3
+        with:
+          name: transcript
+          path: ${{ github.event.inputs.language != 'en' && 'transcript_translated.txt' || 'transcript.txt' }}
