@@ -1,7 +1,6 @@
-const ytdl = require('ytdl-core');
+const ytdl = require('@distube/ytdl-core');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
-const path = require('path');
 const { exec } = require('child_process');
 
 // Function to download video
