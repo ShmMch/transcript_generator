@@ -7,7 +7,7 @@
     "start": "node download_and_transcribe.js"
   },
   "dependencies": {
-    "ytdl-core": "github:eugabrielsilva/node-ytdl-core"
+    "ytdl-core": "github:eugabrielsilva/node-ytdl-core",
     "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {},
