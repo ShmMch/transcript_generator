@@ -37,29 +37,12 @@ jobs:
 
       - name: Transcribe audio
         run: |
-          python -c "
-import whisper
-
-model = whisper.load_model('base')
-result = model.transcribe('video.mp4')
-with open('transcript.txt', 'w') as f:
-    f.write(result['text'])
-"
+          python transcribe.py
 
       - name: Translate transcript
         if: ${{ github.event.inputs.language != 'en' }}
         run: |
-          python -c "
-from googletrans import Translator
-
-translator = Translator()
-with open('transcript.txt', 'r') as f:
-    transcript = f.read()
-
-translated = translator.translate(transcript, dest='${{ github.event.inputs.language }}')
-with open('transcript_translated.txt', 'w') as f:
-    f.write(translated.text)
-"
+          python translate.py ${{ github.event.inputs.language }}
 
       - name: Upload transcript
         uses: actions/upload-artifact@v3
