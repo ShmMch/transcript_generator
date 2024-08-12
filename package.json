@@ -7,8 +7,8 @@
     "start": "node download_and_transcribe.js"
   },
   "dependencies": {
-    "fluent-ffmpeg": "^2.1.2",
-    "ytdl-core": "^4.11.0"
+    "@distube/ytdl-core": "^4.11.0",
+    "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {},
   "engines": {
