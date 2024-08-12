@@ -1,4 +1,4 @@
-name: Download Video
+name: Video Transcript
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         type: string
 
 jobs:
-  download:
+  process_video:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,13 +22,15 @@ jobs:
           node-version: '16'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          sudo apt-get install -y ffmpeg
 
-      - name: Download video
-        run: node download_video.js ${{ github.event.inputs.url }}
+      - name: Download and transcribe video
+        run: node download_and_transcribe.js ${{ github.event.inputs.url }}
 
-      - name: Upload video
+      - name: Upload transcript
         uses: actions/upload-artifact@v3
         with:
-          name: video
-          path: '*.mp4'
+          name: transcript
+          path: transcript.txt
